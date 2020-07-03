@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:retrochat/provider/auth_provider.dart';
 import 'package:retrochat/screens/command_screen.dart';
 import 'package:retrochat/screens/splash_screen.dart';
 import 'package:retrochat/provider/user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 ///added this to check all dependancies are downloaded or not
@@ -36,9 +36,7 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Perfect DOS VGA',
           textTheme: TextTheme(
             headline6: TextStyle(
-              fontFamily: 'Perfect DOS VGA',
-              fontSize: 22,
-              color: (Colors.grey),
+              fontFamily: 'Anton',
             ),
           ),
         ),
@@ -46,23 +44,25 @@ class MyApp extends StatelessWidget {
           stream: FirebaseAuth.instance.onAuthStateChanged,
           builder: (sbContext, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Splash(
-                isLogin: false,
-              );
+              return Splash();
+              /* Center(
+                child: Scaffold(
+                  body: Text('Loading...'),
+                ),
+              );*/
             } else {
               print('HAS DATA ${snapshot.hasData}');
               isLoggedIn = snapshot.hasData;
-              return Splash(
-                isLogin: snapshot.hasData,
-              );
+              return Splash();
+              /*CommandScreen(
+                isLoggedIn: snapshot.hasData,
+              );*/
             }
           },
         ),
         debugShowCheckedModeBanner: false,
         routes: {
-          CommandScreen.routeName: (cntx) => CommandScreen(
-                isLoggedIn: isLoggedIn,
-              ),
+          CommandScreen.routeName: (cntx) => CommandScreen(isLoggedIn: isLoggedIn,),
           Splash.routeName: (cntx) => Splash(),
         },
       ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:retrochat/utility/app_style.dart';
 
 class HelpWidget extends StatelessWidget {
   @override
@@ -14,8 +13,7 @@ class HelpWidget extends StatelessWidget {
             height: 8,
           ),
           HelpChildWidget(
-            text:
-                'DOSChat, version 1.0.0-beta \nThese commands are defined internally. Type \'help\' to see this list.',
+            text: 'Retro Chat, version 1.0.0-beta',
             leftPadding: EdgeInsets.only(left: 0),
           ),
           /*HelpChildWidget(
@@ -27,33 +25,20 @@ class HelpWidget extends StatelessWidget {
             height: 12,
           ),
           HelpChildWidget(
-            text: 'help -  Provide more information on the commands.',
-            leftPadding: EdgeInsets.only(left: 15),
-          ),
-          HelpChildWidget(
-            text: 'signin - Sign in using the username.',
-            leftPadding: EdgeInsets.only(left: 15),
-          ),
-          HelpChildWidget(
-            text: 'signup - Create a new user.',
-            leftPadding: EdgeInsets.only(left: 15),
-          ),
-          HelpChildWidget(
-            text: 'ls - Display the list of users.',
+            text: 'ls userlist | Display the list of users.',
             leftPadding: EdgeInsets.only(left: 15),
           ),
           HelpChildWidget(
             text:
-                'start chat - Start chat with user. e.g. start chat (username)',
+                'start chat | Start chat with user. e.g. start chat {username}',
             leftPadding: EdgeInsets.only(left: 15),
           ),
           HelpChildWidget(
-            text:
-                'clear -  Use to remove all previous commands and output from screen.',
+            text: 'clear | Clear the command screen.',
             leftPadding: EdgeInsets.only(left: 15),
           ),
           HelpChildWidget(
-            text: 'exit - Logout current user.',
+            text: 'exit | Logout user.',
             leftPadding: EdgeInsets.only(left: 15),
           ),
         ],
@@ -80,7 +65,11 @@ class HelpChildWidget extends StatelessWidget {
           child: Text(
             text,
             textAlign: TextAlign.left,
-            style: AppStyle.commandTextSyle,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12.0,
+              fontFamily: 'Perfect DOS VGA',
+            ),
           ),
         ),
       ],

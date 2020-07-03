@@ -1,10 +1,10 @@
 library constant;
 
 // API KEY
-const String API_KEY = '';
+const String API_KEY = 'AIzaSyBsOPJVj7m5Glp1IpuqpD47Tb28b3NW9Es';
 
 // BASE URL
-const String baseURL = '';
+const String baseURL = 'https://retrochat2020-d602a.firebaseio.com/';
 
 // AUTH URL
 const String authURLSignup =
@@ -32,23 +32,9 @@ const keyForCommandNotFound = " Command not found...";
 
 // COMMAND CONSTANT
 const help = 'help';
-const ls = 'ls';
+const ls_userlist = 'ls userlist';
 const startChat = 'start chat';
 const exit = 'exit';
 const clear = 'clear';
-const signup = 'signup';
-const signin = 'signin';
-
-const username = 'username';
-const user_id = 'user_id';
-
-// APPLICATION COMMAND
-List<String> helpCommands = [
-  signup,
-  signin,
-  ls,
-  startChat,
-  exit,
-  clear,
-];
 const createUser = 'create user';
+

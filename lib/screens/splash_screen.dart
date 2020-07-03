@@ -1,15 +1,10 @@
 import 'dart:ffi';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:retrochat/provider/auth_provider.dart';
 import 'dart:async';
 import 'package:retrochat/screens/command_screen.dart';
 
 class Splash extends StatefulWidget {
-  final bool isLogin;
-  Splash({this.isLogin});
 
   @override
   _SplashState createState() => _SplashState();
@@ -18,9 +13,9 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
   Timer _timer;
-  int _start = 5;
+  int _start = 4;
 
-  String _loadingText = "Loading DOSChat";
+  String _loadingText = "Loading Dos Chat";
   String _loadingTextSuffix = "";
   bool _visible = false;
 
@@ -32,32 +27,29 @@ class _SplashState extends State<Splash> {
         () {
           _visible = !_visible;
 
-          if (_start == 5) {
+          if (_start == 9) {
             _loadingTextSuffix = ".";
-          } else if (_start == 4) {
+          } else if (_start == 8) {
             _loadingTextSuffix = "..";
-          } else if (_start == 3) {
+          } else if (_start == 7) {
             _loadingTextSuffix = "...";
-          } else if (_start == 2) {
+          } else if (_start == 6) {
             _loadingTextSuffix = "....";
-          } else if (_start == 1) {
+          } else if (_start == 5) {
             _loadingTextSuffix = ".....";
+          } else if (_start == 4) {
+            _loadingTextSuffix = ".";
+          } else if (_start == 3) {
+            _loadingTextSuffix = "..";
+          } else if (_start == 2) {
+            _loadingTextSuffix = "...";
+          } else if (_start == 1) {
+            _loadingTextSuffix = "....";
           }
 
           if (_start < 1) {
             timer.cancel();
-            _loadingText = "";
-            _loadingTextSuffix = "";
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (ctx) {
-                  return CommandScreen(
-                    isLoggedIn: widget.isLogin,
-                  );
-                },
-              ),
-            );
-            //Navigator.popAndPushNamed(context, CommandScreen.routeName);
+            Navigator.popAndPushNamed(context, CommandScreen.routeName);
           } else {
             _start = _start - 1;
           }
@@ -79,42 +71,25 @@ class _SplashState extends State<Splash> {
   }
 
   Widget build(BuildContext context) {
-    MediaQueryData queryData;
-    queryData = MediaQuery.of(context);
     return Material(
       type: MaterialType.transparency,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            width: queryData.size.width / 4,
-          ),
-          AnimatedOpacity(
+      child: Container(
+          width: double.infinity,
+          child: Center(
+              child: AnimatedOpacity(
             opacity: _visible ? 1.0 : 0.7,
             duration: Duration(milliseconds: 500),
             child: Text(
               _loadingText + _loadingTextSuffix,
-              style: Theme.of(context).textTheme.headline6,
+              style: TextStyle(fontSize: 22, color: (Colors.grey),fontFamily: 'Perfect DOS VGA'),
+
+              /*Text(
+                'Roboto Mono sample',
+                style: TextStyle(fontFamily: 'RobotoMono'),
+              );*/
               textDirection: TextDirection.ltr,
-              textAlign: TextAlign.center,
             ),
-          ),
-        ],
-      ),
-      /* child: Center(
-          child: Expanded(flex: ,
-            child: AnimatedOpacity(
-              opacity: _visible ? 1.0 : 0.7,
-              duration: Duration(milliseconds: 500),
-              child: Text(
-                _loadingText + _loadingTextSuffix,
-                style: Theme.of(context).textTheme.headline6,
-                textDirection: TextDirection.ltr,
-                textAlign: TextAlign.left,
-              ),
-            ),
-          )
-      ),*/
+          ))),
     );
   }
 }

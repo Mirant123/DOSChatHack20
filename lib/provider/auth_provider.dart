@@ -4,29 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:retrochat/provider/user_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api_manager/http_exception.dart';
 import '../api_manager/constant.dart' as CONSTANT;
 
 class AuthProvider with ChangeNotifier {
   final _authInstance = FirebaseAuth.instance;
+  AuthResult _authResult;
+  FirebaseUser _authUser;
   List<User> _users = [];
-
-  Future<String> getUsername() async {
-    final pref = await SharedPreferences.getInstance();
-    final username = pref.getString(CONSTANT.username);
-    return username;
-  }
 
   FirebaseAuth get authInstance {
     return _authInstance;
-  }
-
-  Future<bool> isLoggedIn() async {
-    final pref = await SharedPreferences.getInstance();
-    final username = pref.getString(CONSTANT.username);
-    return username == null ? false : true;
   }
 
   String _getEmailFromUsername(String username) {
@@ -56,12 +45,12 @@ class AuthProvider with ChangeNotifier {
     return userNameList;
   }
 
-  Future<User> getLoginUserObject() async {
-    final pref = await SharedPreferences.getInstance();
-    final username = pref.getString(CONSTANT.username);
-    final userid = pref.getString(CONSTANT.user_id);
-
-    return User(userId: userid, userName: username);
+  Future<String> getUsername() async {
+    if (_authUser == null) {
+      _authUser = await authInstance.currentUser();
+    }
+    final username = _authUser.email.split('@').first;
+    return username;
   }
 
   Future<void> getUserList() async {
@@ -69,24 +58,15 @@ class AuthProvider with ChangeNotifier {
         FirebaseDatabase.instance.reference().child(CONSTANT.firebaseNodeUser);
     try {
       final snapshot = await userRef.once();
-      final pref = await SharedPreferences.getInstance();
-      final username = pref.getString(CONSTANT.username);
-      print(username);
       if (snapshot.value != null) {
         final values = snapshot.value;
-        values.forEach(
-          (userKey, userData) {
-            if (username != userData['username']) {
-              _users.add(
-                User(
-                  userId: userData['user_id'],
-                  userName: userData['username'],
-                  timeStamp: userData['timestamp'],
-                ),
-              );
-            }
-          },
-        );
+        values.forEach((userKey, userData) {
+          _users.add(User(
+            userId: userData['user_id'],
+            userName: userData['username'],
+            timeStamp: userData['timestamp'],
+          ));
+        });
       }
 
       _users.sort((a, b) => a.timeStamp.compareTo(b.timeStamp));
@@ -117,25 +97,24 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> signIn({username: String, password: String}) async {
     try {
-      final authResult = await _authInstance.signInWithEmailAndPassword(
+      _authResult = await _authInstance.signInWithEmailAndPassword(
         email: _getEmailFromUsername(username),
         password: password,
       );
-      if (authResult != null) {
-        final preference = await SharedPreferences.getInstance();
-        preference.setString(CONSTANT.username, username);
-        preference.setString(CONSTANT.user_id, authResult.user.uid);
-        _users.removeWhere((element) => element.userName == username);
+      if (_authResult != null) {
+        print(_authResult);
         notifyListeners();
       }
     } catch (err) {
-      throw HTTPException(errorMessage: err.toString());
+      throw HTTPException(errorMessage: 'Invalid credentials!');
     }
   }
 
   Future<void> signUp({username: String, password: String}) async {
+    AuthResult authResult;
+
     try {
-      final authResult = await _authInstance.createUserWithEmailAndPassword(
+      authResult = await _authInstance.createUserWithEmailAndPassword(
         email: _getEmailFromUsername(username),
         password: password,
       );
@@ -143,25 +122,22 @@ class AuthProvider with ChangeNotifier {
       if (authResult != null) {
         try {
           _storeUserInFirebase(userID: authResult.user.uid, username: username);
-          final preference = await SharedPreferences.getInstance();
-          preference.setString(CONSTANT.username, username);
-          preference.setString(CONSTANT.user_id, authResult.user.uid);
-          _users.removeWhere((element) => element.userName == username);
           notifyListeners();
         } catch (err) {
           throw HTTPException(errorMessage: err.toString());
         }
       }
     } catch (err) {
-      throw HTTPException(errorMessage: err.toString());
+      if (err.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
+        await signIn(username: username, password: password);
+      } else {
+        throw HTTPException(errorMessage: err.toString());
+      }
     }
   }
 
   Future<void> signOut() async {
-    _users = [];
-    final pref = await SharedPreferences.getInstance();
-    pref.clear();
-    _authInstance.signOut();
+    _authUser = null;
     await FirebaseAuth.instance.signOut();
   }
 

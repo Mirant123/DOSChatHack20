@@ -1,7 +1,7 @@
 // COMMAND INPUT TYPE
 enum eInputType {
   none,
-  usernameTextField,
+  normalTextField,
   passwordTextField,
   infoText,
   authenticating,
@@ -12,17 +12,7 @@ enum eInputType {
 // COMMAND TYPE
 enum eCommandType {
   none,
-  username,
-  password,
+  authenticationRequired,
   help,
-  exit,
   ls_userlist,
-}
-
-enum eCurrentCommandType {
-  none,
-  exit,
-  signUp,
-  signIn,
-  command,
 }
